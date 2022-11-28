@@ -21,3 +21,4 @@ print("Estructura de los datos: ", data.shape, "\n")
 print(data.describe(), "\n")
 print(data.info(), "\n")
 print(data.isnull().sum(), "\n")
+#Inside de lo printeado
