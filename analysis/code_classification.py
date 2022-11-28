@@ -1,15 +1,11 @@
-import pandas as pd                                # panel data, for handling dataframes
-pd.set_option('display.max_columns', None)         # show all columns of the dataframe
+import pandas as pd
+pd.set_option('display.max_columns', None)
+import numpy as np
 
-import numpy as np                                 # numerical python, linear algebra library
-
-import pylab as plt                                # plotting library
-import seaborn as sns                              # plotting library
-sns.set(style='white')                             # seaborn style
-
+import pylab as plt
+import seaborn as sns
 
 from sklearn.linear_model import LogisticRegression            # logistic regression model   
-
 from sklearn.preprocessing import MinMaxScaler                 # standarized
 from sklearn.preprocessing import LabelEncoder                 # Para codificar nuestra variable a predecir
 
