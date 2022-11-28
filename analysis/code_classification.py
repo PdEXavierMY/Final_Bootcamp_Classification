@@ -9,3 +9,9 @@ import warnings
 warnings.filterwarnings('ignore')
 
 data = pd.read_csv('./data/creditcardmarketing.csv')
+#analizamos los datos
+print(data.head())
+print(data.shape)
+print(data.describe())
+print(data.info())
+print(data.isnull().sum())
