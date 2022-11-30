@@ -16,9 +16,16 @@ warnings.filterwarnings('ignore')
 data = pd.read_csv('./data/creditcardmarketing.csv')
 
 #sacamso la información de los datos para revisar si necesitamos hacer algún ajuste a nuestros dataset
+#analizamos el dataset
+
 print(data.head(), "\n")
 print("Estructura de los datos: ", data.shape, "\n")
 print(data.describe(), "\n")
 print(data.info(), "\n")
 print(data.isnull().sum(), "\n")
 #Inside de lo printeado
+
+#Hay varias columnas con varos nulos que analizaremos más adelante, y varias columnas no numericas
+#que también modificaremos.
+
+#data cleaning
