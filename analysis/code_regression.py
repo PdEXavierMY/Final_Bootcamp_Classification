@@ -49,6 +49,8 @@ def redondear_datos(columna):
             dataframe[columna][i] = float(
                 dataframe[columna][i].replace(',', '.'))
             dataframe[columna][i] = round(dataframe[columna][i])
+        else:
+            dataframe[columna][i] = int(dataframe[columna][i])
     return dataframe
 
 
@@ -57,6 +59,7 @@ datos_a_redondear = ['bathrooms', 'floors']
 for i in datos_a_redondear:
     redondear_datos(i)
     print(dataframe[i])
+
 
 print(Fore.CYAN + "Ahora vamos a quitar las columnas que no nos hacen falta: lat, long, date, zipcode")
 print(Fore.RESET)
@@ -161,12 +164,9 @@ print(Fore.GREEN + """One of the customers is only interested in the following h
     - Price smaller than 300000""")
 print(Fore.RESET)
 
-def cliente():
-    if (dataframe_regresion['bedrooms'] == 3 or dataframe_regresion['bedrooms'] == 4) and dataframe_regresion['bathrooms'] > 3 and dataframe_regresion['floors'] == 1 and dataframe_regresion['waterfront'] == 0 and dataframe_regresion['condition'] >= 3 and dataframe_regresion['grade'] >= 5 and dataframe_regresion['price'] < 300000:
-        return dataframe_regresion
+data_cliente = dataframe[(dataframe['bedrooms'] == 3) | (dataframe['bedrooms'] == 4) & (dataframe['bathrooms'] > 3) & (dataframe['floors'] == 1) & (dataframe['waterfront'] == 0) & (dataframe['condition'] >= 3) & (dataframe['grade'] >= 5) & (dataframe['price'] < 300000)]
 
-print(cliente())
-print(Fore.CYAN + "No hay ninguna casa que cumpla con los requisitos del cliente")
+print(data_cliente)
 
 print(Fore.GREEN + "Your manager wants to find out the list of properties whose prices are twice more than the average of all the properties in the database. Write code to show them the list of such properties. ")
 print(Fore.RESET)
