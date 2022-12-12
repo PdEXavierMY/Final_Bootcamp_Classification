@@ -24,8 +24,11 @@ st.title('Modelo de regresión:')
 
 st.write('''
     Aquí mostraremos los resultados del modelo de regresión.
-''')
 
+    Vamos a hacer un modelo de regresión lineal para predecir el precio de las casas.
+
+''')
+st.write('''En primer lugar, cargamos los datos y representamos su correlación.''')
 fig = plt.figure(figsize=(15, 10))
 
 sns.set(style='white')
@@ -43,10 +46,9 @@ sns.heatmap(dataframe_regresion.corr(),
           annot=True,
           linewidths=0.5,
           cbar_kws={'shrink': 0.5})
-plt.savefig("media/1st_correlation_regresion.jpg")
-plt.show()
-st.pyplot(fig)
 
+st.pyplot(fig)
+st.write('''Mostramos la nube de puntos de las variables.''')
 def plot_regression_model(x,y):
     global figr2
     x_const = add_constant(x) # add a constant to the model
@@ -85,7 +87,8 @@ y = dataframe_regresion['price']
 modelo = plot_regression_model(x,y)
 x = x.values.reshape(-1,1)
 y = y.values.reshape(-1,1)
-
+st.write('''Ahora vamos a hacer un histograma de los datos reales y los datos predichos.
+ ''')
 fig3r = plt.figure(figsize=(20,20))
 sns.histplot([np.exp(y_pred), y_test])
 plt.title("Histograma de los datos reales y los datos predichos")
