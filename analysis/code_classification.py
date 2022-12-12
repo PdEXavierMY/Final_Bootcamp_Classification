@@ -5,6 +5,7 @@
 import pandas as pd
 pd.set_option('display.max_columns', None)
 import numpy as np
+import streamlit as st
 
 import pylab as plt
 import seaborn as sns
@@ -28,14 +29,6 @@ print(data.isnull().sum(), "\n")
 
 #Hay varias columnas con varos nulos que analizaremos más adelante, y varias columnas no numericas
 #que también modificaremos.
-
-#primero miraremos la correlación de las variables numéricas
-
-lista = data.select_dtypes(include=['int64', 'float64']).columns; print(lista)
-corr = data[lista].corr()
-plt.figure(figsize=(8, 6))
-sns.heatmap(corr, annot=True)
-plt.show()
 
 #Vemos que no hay ninguna variable que esté muy correlacionada con otra, por lo que no es necesario eliminar ninguna columna basandose en este criterio.
 
@@ -72,36 +65,33 @@ print(data['offer_acepted'].unique(), "\n")
 print(data['reward'].unique(), "\n")
 print(data['mailer_type'].unique(), "\n")
 
-#ahora convertimos a numericos el resto de valores con get_dummies
-data_dummy = pd.get_dummies(data, drop_first=True)
-print(data_dummy.info(), "\n")
-
-#todo perfect
+#todo perfect(las demás columnas no numéricas no las vamos a cambiar porque no es necesario)
 
 #vamos a sacar en orden descendente los 10 clientes con mayor balance medio con su balance medio
-data = data_dummy.sort_values(by='average_balance', ascending=False)
+data = data.sort_values(by='average_balance', ascending=False)
 print(data[['customer_number', 'average_balance']].head(10), "\n")
 
 #vamos a sacar la media de la columna average_balance, es decir, la media del balance medio de los clientes
 print(data['average_balance'].mean(), "\n")
 
-''' - What is the average balance of the customers grouped by `Income Level`? The returned result should have only two columns, `Income` and `Average Balance` of the customers.'''
 #vamos a sacar la media del balance medio de los clientes agrupados por nivel de ingresos
-print(data.groupby('income_level')['average_balance'].mean(), "\n")
+print(data.groupby('income_level')[['income_level', 'average_balance']].mean(), "\n")
 
-''' - What is the average balance of the customers grouped by `number_of_bank_accounts_open`? The returned result should have only two columns, `number_of_bank_aaccounts_open` and `Average Balance` of the customers. '''
 #vamos a sacar la media del balance medio de los clientes agrupados por número de cuentas bancarias abiertas
-print(data.groupby('number_of_bank_accounts_open')['average_balance'].mean(), "\n")
+print(data.groupby('banks_accounts_open')['average_balance'].mean(), "\n")
 
-'''- What is the average number of credit cards held by customers for each of the credit card ratings? The returned result should have only two columns, `rating` and `average number of credit cards`.'''
 #vamos a sacar la media del número de tarjetas de crédito que tienen los clientes agrupados por rating de tarjetas de crédito
-print(data.groupby('credit_rating')['credits_cards_held'].mean(), "\n")
+print(data.groupby('credit_rating')[['credit_rating', 'credits_cards_held']].mean(), "\n")
 
-'''  - Is there any correlation between the columns `credit_cards_held` and `number_of_bank_accounts_open`? You can analyze this by grouping the data by one of the variables and then aggregating the results of the other column. Visually check if there is a positive correlation or negative correlation or no correlation between the variables.
-'''
 #vamos a sacar la media del número de tarjetas de crédito que tienen los clientes agrupados por número de cuentas bancarias abiertas
-print(data.groupby('number_of_bank_accounts_open')['credits_cards_held'].mean(), "\n")
+print(data.groupby('banks_accounts_open')[['banks_accounts_open', 'credits_cards_held']].mean(), "\n")
+#estos datos nos aproximan la correlacion entre el numero de cuentas bancarias abiertas y el numero de tarjetas de credito que tienen los clientes,
+#pero para conocer con más precisión el resultado podemos fijarnos en la matriz de correlacion del principio
+#conclusión: no hay correlacion significativa entre el numero de cuentas bancarias abiertas y el numero de tarjetas de credito que tienen los clientes
 
-'''- Check the number of customers in each category (ie number of credit cards held) to assess if that category is well represented in the dataset to include it in your analysis. For eg. If the category is under-represented as compared to other categories, ignore that category in this analysis'''
-#vamos a sacar el número de clientes en cada categoría (es decir, número de tarjetas de crédito que tienen) para evaluar si esa categoría está bien representada en el conjunto de datos para incluirla en su análisis. Por ejemplo. Si la categoría está subrepresentada en comparación con otras categorías, ignore esa categoría en este análisis
+#vamos a sacar el número de clientes en cada categoría (es decir, número de tarjetas de crédito que tienen) para evaluar si esa categoría está bien representada en el conjunto de datos para incluirla en su análisis. Por ejemplo. Si la categoría está subrepresentada en comparación con otras categorías, ignoraremos esa categoría en este análisis
 print(data.groupby('credits_cards_held')['customer_number'].count(), "\n")
+
+#ahora vamos a filtrar y sacar los clientes que tienen credit_rating = medium o high, credit_cards_held = 2 o menos, own_home = Yes y household_size = 3 o más
+data_interesante = data[(data['credit_rating'] == 'medium') | (data['credit_rating'] == 'high') & (data['credits_cards_held'] <= 2) & (data['own_home'] == 'Yes') & (data['household_size'] >= 3)]
+print(data_interesante, "\n")
