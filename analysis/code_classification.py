@@ -93,5 +93,20 @@ print(data.groupby('banks_accounts_open')[['banks_accounts_open', 'credits_cards
 print(data.groupby('credits_cards_held')['customer_number'].count(), "\n")
 
 #ahora vamos a filtrar y sacar los clientes que tienen credit_rating = medium o high, credit_cards_held = 2 o menos, own_home = Yes y household_size = 3 o más
-data_interesante = data[(data['credit_rating'] == 'medium') | (data['credit_rating'] == 'high') & (data['credits_cards_held'] <= 2) & (data['own_home'] == 'Yes') & (data['household_size'] >= 3)]
+data_interesante = data[(data['credit_rating'] == 'Medium') | (data['credit_rating'] == 'High') & (data['credits_cards_held'] <= 2) & (data['own_home'] == 'Yes') & (data['household_size'] >= 3)]
 print(data_interesante, "\n")
+
+#sacamos los clientes con un average_balance < a la media de la columna average_balance
+data_average_balance = data[data['average_balance'] < data['average_balance'].mean()]
+data_average_balance.sort_values(by='average_balance', ascending=True)
+print(data_average_balance[['customer_number', 'average_balance']], "\n")
+
+#sacamos el numero de clientes que aceptan la oferta y el numero de clientes que no aceptan la oferta
+print(data.groupby('offer_acepted')['customer_number'].count(), "\n")
+#recordar 0 = oferta no aceptada y 1 = oferta aceptada
+
+#sacamos los datos con credit rating = high or low
+data_credit_rating = data[(data['credit_rating'] == 'High') | (data['credit_rating'] == 'Low')]
+#sacamos la media de el average balance de los clientes con credit rating = high or low
+print(data_credit_rating.groupby('credit_rating')[['credit_rating', 'average_balance']].mean(), "\n")
+print("La diferencia del balance medio de aquellos con un rating de crédito alto y bajo es de: ")
