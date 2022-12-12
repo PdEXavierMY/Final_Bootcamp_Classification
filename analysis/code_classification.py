@@ -38,3 +38,38 @@ sns.heatmap(corr, annot=True)
 plt.show()
 
 #Vemos que no hay ninguna variable que esté muy correlacionada con otra, por lo que no es necesario eliminar ninguna columna basandose en este criterio.
+
+#vamos con los valores nulos. Como son numericos los rellenaremos con la media de la columna
+#las columnas que vamos a rellenar con la media son las siguientes: average_balance,balanceq1,balanceq2,balanceq3,balanceq4
+
+data['average_balance'].fillna(data['average_balance'].mean(), inplace=True)
+data['balanceq1'].fillna(data['balanceq1'].mean(), inplace=True)
+data['balanceq2'].fillna(data['balanceq2'].mean(), inplace=True)
+data['balanceq3'].fillna(data['balanceq3'].mean(), inplace=True)
+data['balanceq4'].fillna(data['balanceq4'].mean(), inplace=True)
+
+
+#comprobamos que no hay más valores nulos
+print(data.isnull().sum(), "\n")
+
+#ahora vamos a gestionar las columnas no numéricas
+#vamos a ver los valores unicos de estas columnas: offer_acepted,reward,mailer_type,credits_cards_held,household_size
+
+print(data['offer_acepted'].unique(), "\n")
+print(data['reward'].unique(), "\n")
+print(data['mailer_type'].unique(), "\n")
+print(data['credits_cards_held'].unique(), "\n")
+print(data['household_size'].unique(), "\n")
+
+#vamos cambiar a numericos los valores de las columnas offer_acepted,reward,mailer_type
+
+data['offer_acepted'] = data['offer_acepted'].map({'No': 0, 'Yes': 1})
+data['reward'] = data['reward'].map({'Air Miles': 0, 'Cash Back': 1, 'Points': 2})
+data['mailer_type'] = data['mailer_type'].map({'Letter': 0, 'Postcard': 1})
+
+#comprobamos que ha funcionado printeando los valores unicos de nuevo
+print(data['offer_acepted'].unique(), "\n")
+print(data['reward'].unique(), "\n")
+print(data['mailer_type'].unique(), "\n")
+
+#todo perfecto

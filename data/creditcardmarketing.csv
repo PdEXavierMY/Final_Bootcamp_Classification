@@ -1,4 +1,4 @@
-﻿customer_number,offer_acepted,mailer_type,income_level,banks_accounts_open,overdraft_protection,credit_rating,credits_cards_held,homes_owned,household_size,own_home,average_balance,balance
+﻿customer_number,offer_acepted,reward,mailer_type,income_level,banks_accounts_open,overdraft_protection,credit_rating,credits_cards_held,homes_owned,household_size,own_home,average_balance,balanceq1,balanceq2,balanceq3,balanceq4
 1,No,Air Miles,Letter,High,1,No,High,2,1,4,No,1160.75,1669,877,1095,1002
 2,No,Air Miles,Letter,Medium,1,No,Medium,2,2,5,Yes,147.25,39,106,78,366
 3,No,Air Miles,Postcard,High,2,No,Medium,2,1,2,Yes,276.5,367,352,145,242
