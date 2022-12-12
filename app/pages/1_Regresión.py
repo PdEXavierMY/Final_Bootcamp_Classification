@@ -76,12 +76,10 @@ def plot_regression_model(x,y):
         plt.show()
         return modelo
     except:
-        print('No se puede imprimir la recta de regresión para modelos multivariable')
         st.pyplot(figr2)
         plt.show()
         return modelo
 
-print("Vamos a hacer un modelo de regresión lineal para predecir el precio de las casas\n")
 x = dataframe_regresion['sqft_living15']
 y = dataframe_regresion['price']
 modelo = plot_regression_model(x,y)
