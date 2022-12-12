@@ -1,8 +1,8 @@
 import pandas as pd
 import streamlit as st
-from sklearn.datasets import load_boston
+from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, PowerTransformer
+from sklearn.preprocessing import PowerTransformer
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 import pickle
@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 
 #Cargamos el dataset
 dataframe_regresion = pd.read_csv("data/regression_data_clean.csv")
-print(dataframe_regresion.dtypes)
 plt.figure(figsize=(15, 10))
 sns.set(style='white')
 mask=np.triu(np.ones_like(dataframe_regresion.corr(), dtype=bool))
@@ -68,6 +67,49 @@ print("Vamos a hacer un modelo de regresión lineal para predecir el precio de l
 x = dataframe_regresion['sqft_living15']
 y = dataframe_regresion['price']
 modelo = plot_regression_model(x,y)
-"reshape"
-x = x.values.reshape(-1,1)
-y = y.values.reshape(-1,1)
+
+#Dividimos el dataset en train y test
+x = dataframe_regresion[['sqft_living15']]
+y = dataframe_regresion['price']
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.3,random_state=42)
+
+
+#Ahora normalizamos los datos
+pt = PowerTransformer()
+pt.fit(x_train)
+with open("scalers/scalers.plk","wb") as f:
+    pickle.dump(pt, f)
+
+#Normalizamos los datos para que se asmejen a una distribución normal
+x_train_scaled = pt.transform(x_train)
+x_test_scaled = pt.transform(x_test)
+
+y_train_scaled = np.log(y_train)
+
+x_train_scaled = pd.DataFrame(x_train_scaled, columns=x.columns)
+x_test_scaled = pd.DataFrame(x_test_scaled, columns=x.columns)
+
+x_train_scaled
+
+
+#Ahora vamos a crear el modelo de regresión lineal
+lr = LinearRegression()
+lr.fit(x_train_scaled,y_train_scaled)
+#Ahora vamos a predecir los datos
+y_pred = lr.predict(x_test_scaled)
+
+#Ahora vamos a calcular el R2
+r2_score(y_test, np.exp(y_pred))
+#Calculando el R2, hemos obtenido un valor muy bajo debido a que el modelo no es muy bueno, y tiene mucho error
+#Ahora vamos a guardar el modelo
+with open("models/modelo_regresion.plk","wb") as f:
+    pickle.dump(lr, f)
+
+#Ahora vamos a hacer un histograma de los datos reales y los datos predichos
+
+plt.figure(figsize=(20,20))
+sns.histplot([np.exp(y_pred), y_test])
+plt.title("Histograma de los datos reales y los datos predichos")
+plt.show()
+#Guardamos la imagen
+plt.savefig("media/histograma_datos_reales_predichos.png")
