@@ -20,6 +20,6 @@ st.write('''
 
 lista = data.select_dtypes(include=['int64', 'float64']).columns; print(lista)
 corr = data[lista].corr()
-fig = plt.figure(figsize=(8, 6))
+fig = plt.figure(figsize=(30, 20))
 sns.heatmap(corr, annot=True)
 st.pyplot(fig)
