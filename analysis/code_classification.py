@@ -157,17 +157,18 @@ sns.heatmap(data.corr(),
 
 
 #vamos a empezar con el modelo de clasificacion
+data_dummy = pd.get_dummies(data, drop_first = True)
 #primero separaremos los datos en train y test
 #Seleccionamos 80% de los datos para training y 20% para testing
 
-X = data.drop('offer_acepted', axis = True)
-y = data['offer_acepted']
+X = data_dummy.drop('offer_acepted', axis = True)
+y = data_dummy['offer_acepted']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, stratify=y)
 '''minmax = MinMaxScaler().fit(X_train)
 X_train = minmax.transform(X_train)
 X_test = minmax.transform(X_test)'''
-print(y_train.value_counts(normalize = True), y_test.value_counts(normalize = True))
+print(y_test.value_counts(normalize = True), y_train.value_counts(normalize = True))
 
 log = LogisticRegression()
 log.fit(X_train, y_train)
@@ -204,3 +205,20 @@ sns.heatmap(confusion_matrix(y_test, log.predict(X_test)), annot=True)
 plt.title('Confusion Matrix Test')
 #plt.show()
 print(res_num)
+
+
+'''lg = LogisticRegression(max_iter = 2000)
+lg.fit(X_train, y_train)
+pred = lg.predict(X_test)
+
+
+     
+
+acc = accuracy_score(y_test, pred)
+print(f'Accuracy lg: {acc}')
+
+cm = confusion_matrix(y_test, pred)
+
+plt.figure(figsize = (15, 20))
+sns.heatmap(cm, annot = True)
+plt.show()'''
