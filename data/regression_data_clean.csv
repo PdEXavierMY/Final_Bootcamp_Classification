@@ -1,4 +1,4 @@
-id,bedrooms,bathrooms,floors,waterfront,view,condition,grade,yr_built,sqft_living15,sqft_lot15,price,habitaciones
+id,bedrooms,bathrooms,floors,waterfront,view,condition,grade,yr_built,sqft_living15,sqft_lot15,price,rooms
 7129300520,3,1,1,0,0,3,7,1955,1340,5650,221900,4
 6414100192,3,2,2,0,0,3,7,1991,1690,7639,538000,5
 5631500400,2,1,1,0,0,3,6,1933,2720,8062,180000,3
