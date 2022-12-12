@@ -1,5 +1,5 @@
 #Vamos a realizar un modelo de classification en los datos de unos clientes de banco 
-# para estudiar y predecir el comportamiento de los clientes en función de sus características
+#para estudiar y predecir el comportamiento de los clientes en función de sus características
 
 #primero importamos las librerías necesarias
 import pandas as pd
@@ -9,6 +9,15 @@ import streamlit as st
 
 import pylab as plt
 import seaborn as sns
+
+from sklearn.linear_model import LogisticRegression
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import LabelEncoder
+
+from sklearn.model_selection import train_test_split
+
+from sklearn.metrics import f1_score, confusion_matrix, recall_score, precision_score
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -63,11 +72,11 @@ data['reward'] = data['reward'].map({'Air Miles': 0, 'Cash Back': 1, 'Points': 2
 print(data['offer_acepted'].unique(), "\n")
 print(data['reward'].unique(), "\n")
 
-#todo perfect(las demás columnas no numéricas no las vamos a cambiar porque no es necesario)
+#todo perfect(las demás columnas no numéricas las vamos a ver más adelante)
 
 #vamos a sacar en orden descendente los 10 clientes con mayor balance medio con su balance medio
-data = data.sort_values(by='average_balance', ascending=False)
-print(data[['customer_number', 'average_balance']].head(10), "\n")
+data1 = data.sort_values(by='average_balance', ascending=False)
+print(data1[['customer_number', 'average_balance']].head(10), "\n")
 
 #vamos a sacar la media de la columna average_balance, es decir, la media del balance medio de los clientes
 print(data['average_balance'].mean(), "\n")
@@ -113,5 +122,85 @@ print("La diferencia entre la media de balances de aquellos clientes con un rati
 print(data.groupby('mailer_type')['customer_number'].count(), "\n")
 
 #por ultimo vamos a sacar al onceavo cliente con menos balanceq1 en nuestro dataset
-data = data.sort_values(by='balanceq1', ascending=True)
-print(data.iloc[10], "\n")
+data2 = data.sort_values(by='balanceq1', ascending=True)
+print(data2.iloc[10], "\n")
+
+#vamos ahora a terminar con las columnas no numéricas
+print(data.dtypes, "\n")
+#las columnas mailer_type, overdraft_protection, own_home, balanceq1, balanceq2, balanceq3 y balanceq4 no nos sirven para el modelo de clasificacion asi que las vamos a eliminar
+data = data.drop(['mailer_type', 'overdraft_protection', 'own_home', 'balanceq1', 'balanceq2', 'balanceq3', 'balanceq4'], axis=1)
+#ahora con las dos columnas que nos quedan vamos a cambiarlas a numericas manualmente
+data['credit_rating'] = data['credit_rating'].map({'Low': 0, 'Medium': 1, 'High': 2})
+data['income_level'] = data['income_level'].map({'Low': 0, 'Medium': 1, 'High': 2})
+#volvemos a ver los tipos de datos
+print(data.dtypes, "\n")
+#ya tenemos todas las columnas numericas
+#finalmente vamos a guardar el dataset en un nuevo csv
+data.to_csv('data/creditcardmarketing_clean.csv', index=False)
+
+#con el dataset ya limpio, volvemos a ver la matriz de correlacion
+plt.figure(figsize=(15, 10))
+sns.set(style='white')
+mask=np.triu(np.ones_like(data.corr(), dtype=bool))
+cmap=sns.diverging_palette(0, 10, as_cmap=True)
+sns.heatmap(data.corr(),
+          mask=mask,
+          cmap=cmap,
+          center=0,
+          square=True,
+          annot=True,
+          linewidths=0.5,
+          cbar_kws={'shrink': 0.5})
+#plt.show()
+
+
+
+
+#vamos a empezar con el modelo de clasificacion
+#primero separaremos los datos en train y test
+#Seleccionamos 80% de los datos para training y 20% para testing
+
+X = data.drop('offer_acepted', axis = True)
+y = data['offer_acepted']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, stratify=y)
+'''minmax = MinMaxScaler().fit(X_train)
+X_train = minmax.transform(X_train)
+X_test = minmax.transform(X_test)'''
+print(y_train.value_counts(normalize = True), y_test.value_counts(normalize = True))
+
+log = LogisticRegression()
+log.fit(X_train, y_train)
+score_train = log.score(X_train, y_train)
+score_test = log.score(X_test, y_test)
+        
+res_num = {'l_train_score': score_train, 'l_test_score': score_test}
+print(res_num)
+#Parece ser que tenemos un buen resultado pero el accuracy en modelos de clasificación no es la mejor métrica de evaluación
+
+log.fit(X_train, y_train)
+score_train = log.score(X_train, y_train)
+score_test = log.score(X_test, y_test)
+precision_train = precision_score(y_train, log.predict(X_train))
+precision_test = precision_score(y_test, log.predict(X_test))
+recall_train = recall_score(y_train, log.predict(X_train))
+recall_test = recall_score(y_test, log.predict(X_test))
+f1_train = f1_score(y_train, log.predict(X_train))
+f1_test = f1_score(y_test, log.predict(X_test))
+        
+res_num = {'l_train_score': score_train,
+           'l_test_score': score_test,
+           'l_train_precision': precision_train,
+           'l_test_precision': precision_test,
+           'l_train_recall': recall_train,
+           'l_test_recall': recall_test,
+           'l_f1_train': f1_train,
+           'l_f1_test': f1_test}
+        
+sns.heatmap(confusion_matrix(y_train, log.predict(X_train)), annot=True)
+plt.title('Confusion Matrix Train')
+#plt.show()
+sns.heatmap(confusion_matrix(y_test, log.predict(X_test)), annot=True)
+plt.title('Confusion Matrix Test')
+#plt.show()
+print(res_num)

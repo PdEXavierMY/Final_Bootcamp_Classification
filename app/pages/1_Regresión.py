@@ -16,7 +16,6 @@ st.write('''
     Aquí mostraremos los resultados del modelo de regresión.
 ''')
 
-st.code(pathlib.Path('analysis/code_regression.py').read_text())
 fig = plt.figure(figsize=(15, 10))
 
 sns.set(style='white')
