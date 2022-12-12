@@ -199,14 +199,9 @@ print(dataframe_regresion.sort_values(by='price', ascending=False).iloc[10])
 print("Una vez terminadas las preguntas y el data cleaning, pasamos al modelo de regresión")
 
 plt.figure(figsize=(15, 10))
-
 sns.set(style='white')
-
 mask=np.triu(np.ones_like(dataframe_regresion.corr(), dtype=bool))
-
 cmap=sns.diverging_palette(0, 10, as_cmap=True)
-
-
 sns.heatmap(dataframe_regresion.corr(),
            mask=mask,
           cmap=cmap,
