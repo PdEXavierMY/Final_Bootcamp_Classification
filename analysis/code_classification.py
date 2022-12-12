@@ -1,5 +1,5 @@
 #Vamos a realizar un modelo de classification en los datos de unos clientes de banco 
-# para estudiar y predecir el comportamiento de los clientes en función de sus características
+#para estudiar y predecir el comportamiento de los clientes en función de sus características
 
 #primero importamos las librerías necesarias
 import pandas as pd
@@ -9,6 +9,15 @@ import streamlit as st
 
 import pylab as plt
 import seaborn as sns
+
+from sklearn.linear_model import LogisticRegression
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import LabelEncoder
+
+from sklearn.model_selection import train_test_split
+
+from sklearn.metrics import f1_score, confusion_matrix, recall_score, precision_score
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -66,8 +75,8 @@ print(data['reward'].unique(), "\n")
 #todo perfect(las demás columnas no numéricas no las vamos a cambiar porque no es necesario)
 
 #vamos a sacar en orden descendente los 10 clientes con mayor balance medio con su balance medio
-data = data.sort_values(by='average_balance', ascending=False)
-print(data[['customer_number', 'average_balance']].head(10), "\n")
+data1 = data.sort_values(by='average_balance', ascending=False)
+print(data1[['customer_number', 'average_balance']].head(10), "\n")
 
 #vamos a sacar la media de la columna average_balance, es decir, la media del balance medio de los clientes
 print(data['average_balance'].mean(), "\n")
@@ -113,5 +122,54 @@ print("La diferencia entre la media de balances de aquellos clientes con un rati
 print(data.groupby('mailer_type')['customer_number'].count(), "\n")
 
 #por ultimo vamos a sacar al onceavo cliente con menos balanceq1 en nuestro dataset
-data = data.sort_values(by='balanceq1', ascending=True)
-print(data.iloc[10], "\n")
+data2 = data.sort_values(by='balanceq1', ascending=True)
+print(data2.iloc[10], "\n")
+
+#ahora que hemos terminado con todo vamos a dejar ya si todos los valores en numerico con el metodo get_dummies
+data_dummies = pd.get_dummies(data)
+#finalmente vamos a guardar el dataset en un nuevo csv
+data_dummies.to_csv('data/creditcardmarketing_clean.csv', index=False)
+
+#vamos a empezar con el modelo de clasificacion
+#primero separaremos los datos en train y test
+#Seleccionamos 80% de los datos para training y 20% para testing
+X_train, X_test, y_train, y_test = train_test_split(data_dummies.drop(['offer_acepted'], axis=1), data_dummies.offer_acepted, random_state=45, test_size=.2, stratify=data_dummies.offer_acepted)
+minmax = MinMaxScaler().fit(X_train)
+X_train = minmax.transform(X_train)
+X_test = minmax.transform(X_test)
+print(y_train.value_counts(), y_test.value_counts())
+
+log = LogisticRegression()
+log.fit(X_train, y_train)
+score_train = log.score(X_train, y_train)
+score_test = log.score(X_test, y_test)
+        
+res_num = {'l_train_score': score_train, 'l_test_score': score_test}
+print(res_num)
+#Parece ser que tenemos un buen resultado pero el accuracy en modelos de clasificación no es la mejor métrica de evaluación
+
+log.fit(X_train, y_train)
+score_train = log.score(X_train, y_train)
+score_test = log.score(X_test, y_test)
+precision_train = precision_score(y_train, log.predict(X_train))
+precision_test = precision_score(y_test, log.predict(X_test))
+recall_train = recall_score(y_train, log.predict(X_train))
+recall_test = recall_score(y_test, log.predict(X_test))
+f1_train = f1_score(y_train, log.predict(X_train))
+f1_test = f1_score(y_test, log.predict(X_test))
+        
+res_num = {'l_train_score': score_train,
+           'l_test_score': score_test,
+           'l_train_precision': precision_train,
+           'l_test_precision': precision_test,
+           'l_train_recall': recall_train,
+           'l_test_recall': recall_test,
+           'l_f1_train': f1_train,
+           'l_f1_test': f1_test}
+        
+sns.heatmap(confusion_matrix(y_train, log.predict(X_train)), annot=True)
+plt.title('Confusion Matrix Train')
+plt.show()
+sns.heatmap(confusion_matrix(y_test, log.predict(X_test)), annot=True)
+plt.title('Confusion Matrix Test')
+plt.show()
