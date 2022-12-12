@@ -192,6 +192,28 @@ print(dataframe[dataframe['yr_renovated'] != 0])
 
 print("Provide the details of the property that is the 11th most expensive property in your database.")
 
-print(dataframe_regresion.sort_values(by='price', ascending=False).iloc[11])
+print(dataframe_regresion.sort_values(by='price', ascending=False).iloc[10])
+
+# Se pone 10 porque el 11 es el 10 en python ya que empieza en 0
+
+print("Una vez terminadas las preguntas y el data cleaning, pasamos al modelo de regresión")
+
+plt.figure(figsize=(15, 10))
+
+sns.set(style='white')
+
+mask=np.triu(np.ones_like(dataframe_regresion.corr(), dtype=bool))
+
+cmap=sns.diverging_palette(0, 10, as_cmap=True)
 
 
+sns.heatmap(dataframe_regresion.corr(),
+           mask=mask,
+          cmap=cmap,
+          center=0,
+          square=True,
+          annot=True,
+          linewidths=0.5,
+          cbar_kws={'shrink': 0.5})
+plt.savefig("media/1st_correlation_regresion.jpg")
+plt.show()
