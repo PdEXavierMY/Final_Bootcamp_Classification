@@ -23,3 +23,4 @@ corr = data[lista].corr()
 fig = plt.figure(figsize=(30, 20))
 sns.heatmap(corr, annot=True)
 st.pyplot(fig)
+#Vemos que no hay ninguna variable que esté muy correlacionada con otra, por lo que no es necesario eliminar ninguna columna basandose en este criterio.
