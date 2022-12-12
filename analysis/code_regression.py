@@ -1,5 +1,6 @@
 import pandas as pd
 import warnings
+import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.linear_model import LogisticRegression
@@ -143,7 +144,6 @@ print(dataframe_regresion.groupby('bedrooms')['sqft_living15'].mean())
 print(dataframe_regresion.groupby('waterfront')['price'].mean())
 print(dataframe_regresion.groupby('condition')['grade'].mean())
 dataframe_regresion.groupby('condition')['grade'].mean().plot(kind='bar')
-plt.show()
 
 categorias = ["id", "bedrooms", "bathrooms", "floors", "waterfront", "view",
               "condition", "grade", "yr_built", "sqft_living15", "sqft_lot15", "price", "rooms"]

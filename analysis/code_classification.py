@@ -18,7 +18,7 @@ data = pd.read_csv('./data/creditcardmarketing.csv')
 print(data) #vemos que se ha importado correctamente
 print(data.head(10), "\n") #vemos las 10 primeras filas del dataset
 
-#sacamso la información de los datos para revisar si necesitamos hacer algún ajuste a nuestros dataset
+#sacamos la información de los datos para revisar si necesitamos hacer algún ajuste a nuestros dataset
 #analizamos el dataset
 
 print("Estructura de los datos: ", data.shape, "\n") #vemos las filas y columnas que tenemos
@@ -54,16 +54,14 @@ print(data['mailer_type'].unique(), "\n")
 print(data['credits_cards_held'].unique(), "\n")
 print(data['household_size'].unique(), "\n")
 
-#vamos cambiar a numericos los valores de las columnas offer_acepted,reward,mailer_type
+#vamos cambiar a numericos los valores de las columnas offer_acepted,reward
 
 data['offer_acepted'] = data['offer_acepted'].map({'No': 0, 'Yes': 1})
 data['reward'] = data['reward'].map({'Air Miles': 0, 'Cash Back': 1, 'Points': 2})
-data['mailer_type'] = data['mailer_type'].map({'Letter': 0, 'Postcard': 1})
 
 #comprobamos que ha funcionado printeando los valores unicos de nuevo
 print(data['offer_acepted'].unique(), "\n")
 print(data['reward'].unique(), "\n")
-print(data['mailer_type'].unique(), "\n")
 
 #todo perfect(las demás columnas no numéricas no las vamos a cambiar porque no es necesario)
 
@@ -93,5 +91,27 @@ print(data.groupby('banks_accounts_open')[['banks_accounts_open', 'credits_cards
 print(data.groupby('credits_cards_held')['customer_number'].count(), "\n")
 
 #ahora vamos a filtrar y sacar los clientes que tienen credit_rating = medium o high, credit_cards_held = 2 o menos, own_home = Yes y household_size = 3 o más
-data_interesante = data[(data['credit_rating'] == 'medium') | (data['credit_rating'] == 'high') & (data['credits_cards_held'] <= 2) & (data['own_home'] == 'Yes') & (data['household_size'] >= 3)]
+data_interesante = data[(data['credit_rating'] == 'Medium') | (data['credit_rating'] == 'High') & (data['credits_cards_held'] <= 2) & (data['own_home'] == 'Yes') & (data['household_size'] >= 3)]
 print(data_interesante, "\n")
+
+#sacamos los clientes con un average_balance < a la media de la columna average_balance
+data_average_balance = data[data['average_balance'] < data['average_balance'].mean()]
+data_average_balance.sort_values(by='average_balance', ascending=True)
+print(data_average_balance[['customer_number', 'average_balance']], "\n")
+
+#sacamos el numero de clientes que aceptan la oferta y el numero de clientes que no aceptan la oferta
+print(data.groupby('offer_acepted')['customer_number'].count(), "\n")
+#recordar 0 = oferta no aceptada y 1 = oferta aceptada
+
+#sacamos los datos con credit rating = high or low
+data_credit_rating = data[(data['credit_rating'] == 'High') | (data['credit_rating'] == 'Low')]
+#sacamos la media de el average balance de los clientes con credit rating = high or low
+print(data_credit_rating.groupby('credit_rating')[['credit_rating', 'average_balance']].mean(), "\n")
+print("La diferencia entre la media de balances de aquellos clientes con un rating alto y uno bajo es ", (data_credit_rating.groupby('credit_rating')['average_balance'].mean().iloc[0]-data_credit_rating.groupby('credit_rating')['average_balance'].mean().iloc[1]), "\n")
+
+#vamos a ver los tipos de mailer_type que hay y con cuantos clientes se han usado
+print(data.groupby('mailer_type')['customer_number'].count(), "\n")
+
+#por ultimo vamos a sacar al onceavo cliente con menos balanceq1 en nuestro dataset
+data = data.sort_values(by='balanceq1', ascending=True)
+print(data.iloc[10], "\n")
