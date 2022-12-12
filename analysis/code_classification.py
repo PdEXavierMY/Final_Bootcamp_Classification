@@ -138,14 +138,36 @@ print(data.dtypes, "\n")
 #finalmente vamos a guardar el dataset en un nuevo csv
 data.to_csv('data/creditcardmarketing_clean.csv', index=False)
 
+#con el dataset ya limpio, volvemos a ver la matriz de correlacion
+plt.figure(figsize=(15, 10))
+sns.set(style='white')
+mask=np.triu(np.ones_like(data.corr(), dtype=bool))
+cmap=sns.diverging_palette(0, 10, as_cmap=True)
+sns.heatmap(data.corr(),
+          mask=mask,
+          cmap=cmap,
+          center=0,
+          square=True,
+          annot=True,
+          linewidths=0.5,
+          cbar_kws={'shrink': 0.5})
+#plt.show()
+
+
+
+
 #vamos a empezar con el modelo de clasificacion
 #primero separaremos los datos en train y test
 #Seleccionamos 80% de los datos para training y 20% para testing
-X_train, X_test, y_train, y_test = train_test_split(data.drop(['offer_acepted'], axis=1), data.offer_acepted, random_state=45, test_size=.2, stratify=data_dummies.offer_acepted)
+
+X = data.drop('offer_acepted', axis = True)
+y = data['offer_acepted']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, stratify=y)
 minmax = MinMaxScaler().fit(X_train)
 X_train = minmax.transform(X_train)
 X_test = minmax.transform(X_test)
-print(y_train.value_counts(), y_test.value_counts())
+print(y_train.value_counts(normalize = True), y_test.value_counts(normalize = True))
 
 log = LogisticRegression()
 log.fit(X_train, y_train)
