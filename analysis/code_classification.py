@@ -72,7 +72,7 @@ data['reward'] = data['reward'].map({'Air Miles': 0, 'Cash Back': 1, 'Points': 2
 print(data['offer_acepted'].unique(), "\n")
 print(data['reward'].unique(), "\n")
 
-#todo perfect(las demás columnas no numéricas no las vamos a cambiar porque no es necesario)
+#todo perfect(las demás columnas no numéricas las vamos a ver más adelante)
 
 #vamos a sacar en orden descendente los 10 clientes con mayor balance medio con su balance medio
 data1 = data.sort_values(by='average_balance', ascending=False)
@@ -125,15 +125,23 @@ print(data.groupby('mailer_type')['customer_number'].count(), "\n")
 data2 = data.sort_values(by='balanceq1', ascending=True)
 print(data2.iloc[10], "\n")
 
-#ahora que hemos terminado con todo vamos a dejar ya si todos los valores en numerico con el metodo get_dummies
-data_dummies = pd.get_dummies(data)
+#vamos ahora a terminar con las columnas no numéricas
+print(data.dtypes, "\n")
+#las columnas mailer_type, overdraft_protection, own_home, balanceq1, balanceq2, balanceq3 y balanceq4 no nos sirven para el modelo de clasificacion asi que las vamos a eliminar
+data = data.drop(['mailer_type', 'overdraft_protection', 'own_home', 'balanceq1', 'balanceq2', 'balanceq3', 'balanceq4'], axis=1)
+#ahora con las dos columnas que nos quedan vamos a cambiarlas a numericas manualmente
+data['credit_rating'] = data['credit_rating'].map({'Low': 0, 'Medium': 1, 'High': 2})
+data['income_level'] = data['income_level'].map({'Low': 0, 'Medium': 1, 'High': 2})
+#volvemos a ver los tipos de datos
+print(data.dtypes, "\n")
+#ya tenemos todas las columnas numericas
 #finalmente vamos a guardar el dataset en un nuevo csv
-data_dummies.to_csv('data/creditcardmarketing_clean.csv', index=False)
+data.to_csv('data/creditcardmarketing_clean.csv', index=False)
 
 #vamos a empezar con el modelo de clasificacion
 #primero separaremos los datos en train y test
 #Seleccionamos 80% de los datos para training y 20% para testing
-X_train, X_test, y_train, y_test = train_test_split(data_dummies.drop(['offer_acepted'], axis=1), data_dummies.offer_acepted, random_state=45, test_size=.2, stratify=data_dummies.offer_acepted)
+X_train, X_test, y_train, y_test = train_test_split(data.drop(['offer_acepted'], axis=1), data.offer_acepted, random_state=45, test_size=.2, stratify=data_dummies.offer_acepted)
 minmax = MinMaxScaler().fit(X_train)
 X_train = minmax.transform(X_train)
 X_test = minmax.transform(X_test)
@@ -169,8 +177,8 @@ res_num = {'l_train_score': score_train,
         
 sns.heatmap(confusion_matrix(y_train, log.predict(X_train)), annot=True)
 plt.title('Confusion Matrix Train')
-plt.show()
+#plt.show()
 sns.heatmap(confusion_matrix(y_test, log.predict(X_test)), annot=True)
 plt.title('Confusion Matrix Test')
-plt.show()
+#plt.show()
 print(res_num)
