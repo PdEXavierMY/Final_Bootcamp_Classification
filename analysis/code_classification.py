@@ -5,6 +5,7 @@
 import pandas as pd
 pd.set_option('display.max_columns', None)
 import numpy as np
+import streamlit as st
 
 import pylab as plt
 import seaborn as sns
@@ -28,14 +29,6 @@ print(data.isnull().sum(), "\n")
 
 #Hay varias columnas con varos nulos que analizaremos más adelante, y varias columnas no numericas
 #que también modificaremos.
-
-#primero miraremos la correlación de las variables numéricas
-
-lista = data.select_dtypes(include=['int64', 'float64']).columns; print(lista)
-corr = data[lista].corr()
-plt.figure(figsize=(8, 6))
-sns.heatmap(corr, annot=True)
-plt.show()
 
 #Vemos que no hay ninguna variable que esté muy correlacionada con otra, por lo que no es necesario eliminar ninguna columna basandose en este criterio.
 
