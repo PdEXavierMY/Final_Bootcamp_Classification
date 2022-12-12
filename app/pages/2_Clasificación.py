@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import pathlib
 import sys
-import plotly.figure_factory as ff
-import plotly.graph_objects as go
 
 # accedemos al directorio padre
 path = pathlib.Path(__file__).parent.parent.parent
