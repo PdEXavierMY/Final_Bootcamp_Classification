@@ -16,7 +16,7 @@ sys.path.append(str(path))
 # importamos el codigo de analysis/code_classification.py
 from analysis.code_classification import *
 
-st.title('Modelo de clasificación')
+st.title('Modelo de clasificación:')
 
 st.write('''
     Aquí mostraremos los resultados del modelo de clasificación.

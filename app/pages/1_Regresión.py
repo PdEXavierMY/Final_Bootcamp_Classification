@@ -20,7 +20,7 @@ sys.path.append(str(path))
 # importamos el codigo de analysis/code_regression.py
 from analysis.code_regression import *
 
-st.title('Modelo de regresión')
+st.title('Modelo de regresión:')
 
 st.write('''
     Aquí mostraremos los resultados del modelo de regresión.
