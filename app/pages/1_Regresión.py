@@ -87,3 +87,8 @@ y = dataframe_regresion['price']
 modelo = plot_regression_model(x,y)
 x = x.values.reshape(-1,1)
 y = y.values.reshape(-1,1)
+
+fig3r = plt.figure(figsize=(20,20))
+sns.histplot([np.exp(y_pred), y_test])
+plt.title("Histograma de los datos reales y los datos predichos")
+st.pyplot(fig3r)
