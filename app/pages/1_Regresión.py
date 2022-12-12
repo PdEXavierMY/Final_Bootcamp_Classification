@@ -18,3 +18,5 @@ st.write('''
 
 st.code(pathlib.Path('analysis/code_regression.py').read_text())
 
+fig = dataframe_regresion.groupby('condition')['grade'].mean().plot(kind='bar')
+st.pyplot(fig)
