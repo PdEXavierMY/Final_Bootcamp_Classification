@@ -164,9 +164,9 @@ X = data.drop('offer_acepted', axis = True)
 y = data['offer_acepted']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, stratify=y)
-minmax = MinMaxScaler().fit(X_train)
+'''minmax = MinMaxScaler().fit(X_train)
 X_train = minmax.transform(X_train)
-X_test = minmax.transform(X_test)
+X_test = minmax.transform(X_test)'''
 print(y_train.value_counts(normalize = True), y_test.value_counts(normalize = True))
 
 log = LogisticRegression()
