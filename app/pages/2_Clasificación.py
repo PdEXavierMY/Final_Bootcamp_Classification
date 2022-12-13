@@ -23,7 +23,7 @@ sys.path.append(str(path))
 
 # importamos el codigo de analysis/code_classification.py
 from analysis.code_classification import *
-
+from analysis.code_classification_data_cleaning import *
 st.title('Modelo de clasificación:')
 
 st.write('''
