@@ -1,21 +1,9 @@
 import streamlit as st
 import pathlib
 import sys
-import pandas as pd
 import os
-pd.set_option('display.max_columns', None)
-import numpy as np
-import pylab as plt
-import seaborn as sns
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score, confusion_matrix, recall_score, precision_score
-from imblearn.over_sampling import SMOTE, RandomOverSampler
-import warnings
+
 from PIL import Image
-warnings.filterwarnings('ignore')
 
 # accedemos al directorio padre
 path = pathlib.Path(__file__).parent.parent.parent
