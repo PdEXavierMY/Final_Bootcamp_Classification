@@ -1,16 +1,5 @@
-import pandas as pd
+
 import streamlit as st
-from sklearn.datasets import load_boston
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, PowerTransformer
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
-import pickle
-from statsmodels.api import add_constant, OLS
-from statsmodels.formula.api import ols
-import pylab as plt
-import seaborn as sns
-import warnings
 import sys
 import pathlib
 # accedemos al directorio padre
