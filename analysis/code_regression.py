@@ -85,7 +85,7 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_
 
 pt = PowerTransformer()
 pt.fit(x_train)
-with open("scalers/scalers.plk", "wb") as f:
+with open("scalers/scalers.pkl", "wb") as f:
     pickle.dump(pt, f)
 
 # Los guardamos en un archivo pickle para poder usarlos en el futuro
@@ -113,7 +113,7 @@ print("El R2 es de: ", r2_score(y_test, np.exp(y_pred)))
 # Calculando el R2, hemos obtenido un valor muy bajo debido a que el modelo no es muy bueno, y tiene mucho error
 # Ahora vamos a guardar el modelo
 
-with open("models/modelo_regresion.plk", "wb") as f:
+with open("models/modelo_regresion.pkl", "wb") as f:
     pickle.dump(lr, f)
 
 # Ahora vamos a hacer un histograma de los datos reales y los datos predichos
@@ -126,3 +126,7 @@ def histograma():
     plt.show()
 
 histograma()
+
+"""Conclusiones:
+El modelo de regresión lineal que hemos aplicado no es del todo bueno, ya que a la hora de predecir el precio de las viviendas, al aplicarle una regresión lineal a los datos, lo que más se asemeja a una recta son los metros cuadrados de la vivienda, pero para poder hacer una predicción más precisa, deberíamos de tener en cuenta más variables, como el número de habitaciones, el número de baños, la zona, la antigüedad, etc.
+Por ello, el modelo es capaz de predecir el precio de las viviendas, pero no de forma muy precisa, ya que la puntuación R2 es muy bajo, y el error es muy alto."""
