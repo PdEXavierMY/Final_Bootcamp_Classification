@@ -22,6 +22,8 @@ from sklearn.metrics import f1_score, confusion_matrix, recall_score, precision_
 
 from imblearn.over_sampling import SMOTE, RandomOverSampler
 
+import pickle
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -70,15 +72,15 @@ res_num = {'l_train_score': score_train,
         
 sns.heatmap(confusion_matrix(y_train, log.predict(X_train)), annot=True)
 plt.title('Confusion Matrix Train')
-#plt.show()
+plt.show()
 sns.heatmap(confusion_matrix(y_test, log.predict(X_test)), annot=True)
 plt.title('Confusion Matrix Test')
-#plt.show()
+plt.show()
 print(res_num, '\n')
 #nuestra precision es horrible, vamos a ver que pasa con los datos
 #vamos a ver el balanceo de los datos para hacernos una idea de que falla
 sns.countplot(data_dummy.offer_acepted)
-#plt.show()
+plt.show()
 
 #los numeros estan muuuy desbalanceados, vamos a evaluar nuestras opciones
 #como no tenemos un numero demasiado grande de datos vamos a hacer un oversampling en los datos train
@@ -89,7 +91,7 @@ X_train_sm, y_train_sm = smote.fit_resample(X_train, y_train)
 print(X_train_sm.shape, y_train_sm.shape, '\n')
 print(y_train_sm.value_counts(), '\n')
 sns.histplot(y_train_sm)
-#plt.show()
+plt.show()
 #balanceamos(forzamos) los datos
 
 log.fit(X_train_sm, y_train_sm)
@@ -113,10 +115,10 @@ res_sm = {'le_train_sm_score': score_train_sm,
         
 sns.heatmap(confusion_matrix(y_train_sm, log.predict(X_train_sm)), annot=True);
 plt.title('Confusion Matrix Train')
-#plt.show()
+plt.show()
 sns.heatmap(confusion_matrix(y_test, log.predict(X_test)), annot=True)
 plt.title('Confusion Matrix Test')
-#plt.show()
+plt.show()
 
 print(res_sm, '\n')
 '''El modelo ha mejorado un poco y se ha corregido el overfitting. Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados nuestros datos en busca de colinealidad, realizar un estudio de importancia de características o cambiar de modelo. Antes de cambiar de modelo vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
@@ -165,7 +167,7 @@ def print_heatmap_corr(data:pd.DataFrame, annot:bool=True, cmap:str=None,
             annot=annot
            )
     p.set_title(title, fontsize=20)
-    #plt.show()
+    plt.show()
 
 print_heatmap_corr(data_dummy_pos_coef)
 
@@ -210,8 +212,13 @@ res = {'lr_train_score': score_train,
         
 sns.heatmap(confusion_matrix(y_train, lr.predict(X_train)), annot=True)
 plt.title('Confusion Matrix Train')
-#plt.show()
+plt.show()
 sns.heatmap(confusion_matrix(y_test, lr.predict(X_test)), annot=True)
 plt.title('Confusion Matrix Test')
-#plt.show()
+plt.show()
 print(res, '\n')
+
+''''''
+
+
+pickle.dump(lr, open('../models/modelo_clasificacion.pkl', 'wb'))
