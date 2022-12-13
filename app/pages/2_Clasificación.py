@@ -150,8 +150,14 @@ plt.title('Confusion Matrix Test')
 st.pyplot(fig8)
 plt.show()
 
+print(res_sm, '\n')
+'''El modelo ha mejorado un poco y se ha corregido el overfitting. El test ha subido por lo que ya tenemos un dato bajo pero suficiente para poder realizar nuestra predicción. El único problema es la precisión de nuestro modelo, vamos a ver si podemos mejorarla.
+Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados nuestros datos en busca de colinealidad, realizar un estudio de importancia de características o cambiar de modelo. Antes de cambiar de modelo vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
+
+print(log.intercept_, '\n')
 coefs = dict(zip(list(data_dummy.drop(['offer_acepted'], axis=1).columns),list(log.coef_[0])))
 print(coefs, '\n')
+
 '''Vamos a interpretar estos coeficientes, también denominados R statistic.
 
 Un valor positivo significa que al crecer la variable predictora, lo hace la probabilidad de que el evento ocurra. Un valor negativo implica que si la variable predictora decrece, la probabilidad de que el resultado ocurra disminuye. Si una variable tiene un valor pequeño de R entonces esta contribuye al modelo sólo una pequeña cantidad.
@@ -192,25 +198,17 @@ def print_heatmap_corr(data:pd.DataFrame, annot:bool=True, cmap:str=None,
             annot=annot
            )
     p.set_title(title, fontsize=20)
-    
-    if save:
-        try:
-            plt.savefig(f'./media/{title}.jpg')
-        except:
-            destino = input('No exite la carpeta de destino, introduce un nombre para la carpeta de destino: ')
-            os.mkdir(destino)
-            plt.savefig(f'{destino}/{title}.jpg')
     st.pyplot(figcorr)
     plt.show()
 
 print_heatmap_corr(data_dummy_pos_coef)
+
 
 '''Vemos que la las variables independientes no tienen mucha correlación con nuestra variable dependiente, esto quiere decir que la solución al problema es compleja y hay que tratarla con cuidado, y también puede darnos una indicación de que los resultados que podemos esperar de los modelos no van ha ser muy buenos, pero tenemos que tratar de hacer todo lo posible para que estos sean lo más altos posibles. Respecto a la correlación entre las variables independientes vemos que salvo TotalCharges no hay excesiva colinealidad entre nuestras variables, por lo que nos quedaremos con ellas.
 
 Como nuestro set de datos es diferente al original debemos de volver a realizar el train_test_split de nuevo, junto con el scaler y el smote para corregir el balanceo.
 
 Declararemos de nuevo nuestras X e y y aplicamos todo el proceso de transformaciones.'''
-
 X = data_dummy_pos_coef.drop(['offer_acepted'], axis=1)
 y = data_dummy_pos_coef['offer_acepted']
 print(X.shape, y.shape, '\n')
@@ -233,4 +231,27 @@ precision_test = precision_score(y_test, lr.predict(X_test))
 recall_train = recall_score(y_train, lr.predict(X_train))
 recall_test = recall_score(y_test, lr.predict(X_test))
 f1_train = f1_score(y_train, lr.predict(X_train))
-f1_test = f1_score(y_test, lr.predict(X_test))   
+f1_test = f1_score(y_test, lr.predict(X_test))
+        
+res = {'lr_train_score': score_train,
+       'lr_test_score': score_test,
+       'lr_train_precision': precision_train,
+       'lr_test_precision': precision_test,
+       'lr_train_recall': recall_train,
+       'lr_test_recall': recall_test,
+       'lr_f1_train': f1_train,
+       'lr_f1_test': f1_test}
+        
+fig9 = plt.figure(figsize=(20,15))
+sns.heatmap(confusion_matrix(y_train, lr.predict(X_train)), annot=True)
+plt.title('Confusion Matrix Train')
+st.pyplot(fig9)
+plt.show()
+fig10 = plt.figure(figsize=(20,15))
+sns.heatmap(confusion_matrix(y_test, lr.predict(X_test)), annot=True)
+plt.title('Confusion Matrix Test')
+st.pyplot(fig10)
+plt.show()
+print(res, '\n')
+
+'''En este nuevo modelo la precisión ha disminuido, así que nos quedaremos con el modelo anterior. El modelo escogido nos da cierta información acerca de que clientes nos pueden interesar, pero no es un modelo que nos de una gran precisión, por lo que no podemos confiar en él con plenitud para tomar decisiones.'''
