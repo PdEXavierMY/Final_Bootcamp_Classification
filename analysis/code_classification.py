@@ -66,10 +66,14 @@ print(data['mailer_type'].unique(), "\n")
 print(data['credits_cards_held'].unique(), "\n")
 print(data['household_size'].unique(), "\n")
 
-#vamos cambiar a numericos los valores de las columnas offer_acepted,reward
+#vamos cambiar a numericos los valores de las columnas offer_acepted,reward, mailer_type, overdraft_protection, own_home
 
 data['offer_acepted'] = data['offer_acepted'].map({'No': 0, 'Yes': 1})
 data['reward'] = data['reward'].map({'Air Miles': 0, 'Cash Back': 1, 'Points': 2})
+data['mailer_type'] = data['mailer_type'].map({'Letter': 0, 'Postcard': 1})
+data['overdraft_protection'] = data['overdraft_protection'].map({'No': 0, 'Yes': 1})
+data['own_home'] = data['own_home'].map({'No': 0, 'Yes': 1})
+
 
 #comprobamos que ha funcionado printeando los valores unicos de nuevo
 print(data['offer_acepted'].unique(), "\n")
@@ -130,8 +134,8 @@ print(data2.iloc[10], "\n")
 
 #vamos ahora a terminar con las columnas no numéricas
 print(data.dtypes, "\n")
-#las columnas mailer_type, overdraft_protection, own_home, balanceq1, balanceq2, balanceq3 y balanceq4 no nos sirven para el modelo de clasificacion asi que las vamos a eliminar
-data = data.drop(['mailer_type', 'overdraft_protection', 'own_home', 'balanceq1', 'balanceq2', 'balanceq3', 'balanceq4'], axis=1)
+#las columnas balanceq1, balanceq2, balanceq3 y balanceq4 no nos sirven para el modelo de clasificacion asi que las vamos a eliminar
+data = data.drop(['balanceq1', 'balanceq2', 'balanceq3', 'balanceq4'], axis=1)
 #ahora con las dos columnas que nos quedan vamos a cambiarlas a numericas manualmente
 data['credit_rating'] = data['credit_rating'].map({'Low': 0, 'Medium': 1, 'High': 2})
 data['income_level'] = data['income_level'].map({'Low': 0, 'Medium': 1, 'High': 2})
