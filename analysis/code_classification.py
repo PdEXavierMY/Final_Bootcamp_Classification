@@ -14,13 +14,12 @@ import seaborn as sns
 from sklearn.linear_model import LogisticRegression
 
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import LabelEncoder
 
 from sklearn.model_selection import train_test_split
 
 from sklearn.metrics import f1_score, confusion_matrix, recall_score, precision_score
 
-from imblearn.over_sampling import SMOTE, RandomOverSampler
+from imblearn.over_sampling import SMOTE
 
 import pickle
 
@@ -77,14 +76,14 @@ sns.heatmap(confusion_matrix(y_test, log.predict(X_test)), annot=True)
 plt.title('Confusion Matrix Test')
 plt.show()
 print(res_num, '\n')
-#nuestra precision es horrible, vamos a ver que pasa con los datos
-#vamos a ver el balanceo de los datos para hacernos una idea de que falla
+'''Nuestra precision es horrible, vamos a ver que pasa con los datos. Para ello,
+vamos a estudiar el balanceo de los datos para hacernos una idea de que es lo que falla'''
 sns.countplot(data_dummy.offer_acepted)
 plt.show()
 
-#los numeros estan muuuy desbalanceados, vamos a evaluar nuestras opciones
-#como no tenemos un numero extremadamente grande de datos vamos a hacer un oversampling en los datos train
-#en este caso nos vamos a decantar por el método de oversampling: SMOTE
+'''Los numeros estan muy desbalanceados, así que vamos a evaluar nuestras opciones.
+Como no tenemos un número extremadamente grande de datos vamos a hacer un oversampling en los datos train,
+en este caso decantándonos por el método de oversampling: SMOTE'''
 smote = SMOTE()
 
 X_train_sm, y_train_sm = smote.fit_resample(X_train, y_train)
@@ -92,7 +91,7 @@ print(X_train_sm.shape, y_train_sm.shape, '\n')
 print(y_train_sm.value_counts(), '\n')
 sns.histplot(y_train_sm)
 plt.show()
-#balanceamos(forzamos) los datos
+'''Balanceamos(forzamos) los datos'''
 
 log.fit(X_train_sm, y_train_sm)
 score_train_sm = log.score(X_train_sm, y_train_sm)
@@ -122,7 +121,7 @@ plt.show()
 
 print(res_sm, '\n')
 '''El modelo ha mejorado un poco y se ha corregido el overfitting. El test ha subido por lo que ya tenemos un dato bajo pero suficiente para poder realizar nuestra predicción. El único problema es la precisión de nuestro modelo, vamos a ver si podemos mejorarla.
-Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados nuestros datos en busca de colinealidad, realizar un estudio de importancia de características o cambiar de modelo. Antes de cambiar de modelo vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
+Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados estos en busca de colinealidad o realizar un estudio de importancia de características. Vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
 
 print(log.intercept_, '\n')
 coefs = dict(zip(list(data_dummy.drop(['offer_acepted'], axis=1).columns),list(log.coef_[0])))
@@ -219,7 +218,7 @@ plt.title('Confusion Matrix Test')
 plt.show()
 print(res, '\n')
 
-'''En este nuevo modelo la precisión ha disminuido, así que nos quedaremos con el modelo anterior. El modelo escogido nos da cierta información acerca de que clientes nos pueden interesar, pero no es un modelo que nos de una gran precisión, por lo que no podemos confiar en él con plenitud para tomar decisiones.'''
+'''En este nuevo modelo la precisión junto al resto de valores ha disminuido, así que nos quedaremos con el modelo anterior. El modelo escogido nos da cierta información acerca de que clientes nos pueden interesar, pero no es un modelo que nos de una gran precisión, por lo que no podemos confiar en él con plenitud para tomar decisiones.'''
 
 
 pickle.dump(lr, open('./models/modelo_clasificacion.pkl', 'wb'))
