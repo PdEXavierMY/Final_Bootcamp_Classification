@@ -34,7 +34,6 @@ corr = data[lista].corr()
 fig1 = plt.figure(figsize=(30, 20))
 sns.heatmap(corr, annot=True)
 st.pyplot(fig1)
-st.write('''Con los datos limpios, mostramos la matriz de correlación''')
 fig2 = plt.figure(figsize=(15, 10))
 sns.set(style='white')
 mask=np.triu(np.ones_like(data.corr(), dtype=bool))
@@ -48,6 +47,7 @@ sns.heatmap(data.corr(),
           linewidths=0.5,
           cbar_kws={'shrink': 0.5})
 st.pyplot(fig2)
+st.write('''Mostramos la matriz de correlación inicial, que nos ayuda a determinar si eliminar alguna columna.''')
 #Vemos que no hay ninguna variable que esté muy correlacionada con otra, por lo que no es necesario eliminar ninguna columna basandose en este criterio.
 
 data_dummy = pd.get_dummies(data, drop_first = True)
@@ -101,13 +101,17 @@ plt.title('Confusion Matrix Test')
 st.pyplot(fig4)
 plt.show()
 print(res_num, '\n')
-#nuestra precision es bastante mala, vamos a probar con un modelo de arbol de decision
+'''Nuestra precision es horrible, además de nuestra matriz de confusión sin valor alguno. Vamos a estudiar los datos para entender que ocurre. Para ello,
+vamos a estudiar el balanceo de los datos para hacernos una idea de que es lo que falla.'''
 fig5 = plt.figure(figsize=(15, 10))
 #vamos a ver el balanceo de los datos
 sns.countplot(data_dummy.offer_acepted)
 # mostramos el gráfico con streamlit
 st.pyplot(fig5)
 plt.show()
+'''Los numeros estan muy desbalanceados, así que vamos a evaluar nuestras opciones.
+Como no tenemos un número extremadamente grande de datos vamos a hacer un oversampling en los datos train,
+en este caso decantándonos por el método de oversampling: SMOTE'''
 
 #como no tenemos un numero demasiado grande de datos vamos a hacer un oversampling en los datos train
 #vamos a probar con ambos métodos de oversampling: SMOTE y random oversampling
@@ -152,17 +156,11 @@ plt.show()
 
 print(res_sm, '\n')
 '''El modelo ha mejorado un poco y se ha corregido el overfitting. El test ha subido por lo que ya tenemos un dato bajo pero suficiente para poder realizar nuestra predicción. El único problema es la precisión de nuestro modelo, vamos a ver si podemos mejorarla.
-Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados nuestros datos en busca de colinealidad, realizar un estudio de importancia de características o cambiar de modelo. Antes de cambiar de modelo vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
+Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados estos en busca de colinealidad o realizar un estudio de importancia de características. Vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
 
 print(log.intercept_, '\n')
 coefs = dict(zip(list(data_dummy.drop(['offer_acepted'], axis=1).columns),list(log.coef_[0])))
 print(coefs, '\n')
-
-'''Vamos a interpretar estos coeficientes, también denominados R statistic.
-
-Un valor positivo significa que al crecer la variable predictora, lo hace la probabilidad de que el evento ocurra. Un valor negativo implica que si la variable predictora decrece, la probabilidad de que el resultado ocurra disminuye. Si una variable tiene un valor pequeño de R entonces esta contribuye al modelo sólo una pequeña cantidad.
-
-De esto podemos extraer que si quitamos todas las columnas con un coeficiente negativo, nuestro modelo podría mejorar.'''
 
 neg_coef = []
 
