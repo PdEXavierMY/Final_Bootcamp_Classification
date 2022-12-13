@@ -14,13 +14,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, confusion_matrix, recall_score, precision_score
 from imblearn.over_sampling import SMOTE, RandomOverSampler
 import warnings
+from PIL import Image
 warnings.filterwarnings('ignore')
-
 
 # accedemos al directorio padre
 path = pathlib.Path(__file__).parent.parent.parent
 sys.path.append(str(path))
-
+imagen1 = Image.open('media/datos_modelo_valido.png')
+imagen2 = Image.open('media/datos_modeloultimo_novalido.png')
 # importamos el codigo de analysis/code_classification.py
 from analysis.code_classification import *
 from analysis.code_classification_data_cleaning import *
@@ -201,7 +202,7 @@ def print_heatmap_corr(data:pd.DataFrame, annot:bool=True, cmap:str=None,
 
 print_heatmap_corr(data_dummy_pos_coef)
 
-
+st.image(imagen1)
 '''Vemos que la las variables independientes no tienen mucha correlación con nuestra variable dependiente, esto quiere decir que la solución al problema es compleja y hay que tratarla con cuidado, y también puede darnos una indicación de que los resultados que podemos esperar de los modelos no van ha ser muy buenos, pero tenemos que tratar de hacer todo lo posible para que estos sean lo más altos posibles. Respecto a la correlación entre las variables independientes vemos que salvo TotalCharges no hay excesiva colinealidad entre nuestras variables, por lo que nos quedaremos con ellas.
 
 Como nuestro set de datos es diferente al original debemos de volver a realizar el train_test_split de nuevo, junto con el scaler y el smote para corregir el balanceo.
@@ -251,5 +252,5 @@ plt.title('Confusion Matrix Test')
 st.pyplot(fig10)
 plt.show()
 print(res, '\n')
-
+st.image(imagen2)
 '''En este nuevo modelo la precisión ha disminuido, así que nos quedaremos con el modelo anterior. El modelo escogido nos da cierta información acerca de que clientes nos pueden interesar, pero no es un modelo que nos de una gran precisión, por lo que no podemos confiar en él con plenitud para tomar decisiones.'''
