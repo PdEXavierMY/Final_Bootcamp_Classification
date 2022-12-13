@@ -28,7 +28,7 @@ st.write('''
     Vamos a hacer un modelo de regresión lineal para predecir el precio de las casas.
 
 ''')
-st.write('''En primer lugar, cargamos los datos y representamos su correlación.''')
+st.write('''En primer lugar, cargamos los datos y representamos la matriz de correlación.''')
 fig = plt.figure(figsize=(15, 10))
 
 sns.set(style='white')
@@ -48,7 +48,8 @@ sns.heatmap(dataframe_regresion.corr(),
           cbar_kws={'shrink': 0.5})
 
 st.pyplot(fig)
-st.write('''Mostramos la nube de puntos de las variables.''')
+st.write('''Como se puede observar en la matriz de correlación no hya ninguna que tenga más de un 0.9 de correlación, por lo tanto no podemos eliminar esas variables, la que más se acerca es la bedrooms con rooms, pero como rooms es la agrupación de bedrooms y bathrooms no es necesario eliminarla.
+Mostramos la nube de puntos entre sqft_living15 y price, viendo así que tiene cierto parecido a una regresión lineal entre ambas.''')
 def plot_regression_model(x,y):
     global figr2
     x_const = add_constant(x) # add a constant to the model
@@ -87,8 +88,8 @@ y = dataframe_regresion['price']
 modelo = plot_regression_model(x,y)
 x = x.values.reshape(-1,1)
 y = y.values.reshape(-1,1)
-st.write('''Ahora vamos a hacer un histograma de los datos reales y los datos predichos.
- ''')
+st.write('''Una vez aplicada la regresión lineal, podemos ver que no es del todo precisa, teniendo un coeficiente R2 de 0.27, ya que en el histograma podemos observar ciertas diferencias entre los datos reales y los datos predichos.''')
+
 fig3r = plt.figure(figsize=(20,20))
 sns.histplot([np.exp(y_pred), y_test])
 plt.title("Histograma de los datos reales y los datos predichos")
