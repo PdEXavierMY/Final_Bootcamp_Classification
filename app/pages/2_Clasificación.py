@@ -159,6 +159,8 @@ print(res_sm, '\n')
 '''El modelo ha mejorado un poco y se ha corregido el overfitting. El test ha subido por lo que ya tenemos un dato bajo pero suficiente para poder realizar nuestra predicción. El único problema es la precisión de nuestro modelo, vamos a ver si podemos mejorarla.
 Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados estos en busca de colinealidad o realizar un estudio de importancia de características. Vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
 
+st.image(imagen1)
+
 print(log.intercept_, '\n')
 coefs = dict(zip(list(data_dummy.drop(['offer_acepted'], axis=1).columns),list(log.coef_[0])))
 print(coefs, '\n')
@@ -202,7 +204,6 @@ def print_heatmap_corr(data:pd.DataFrame, annot:bool=True, cmap:str=None,
 
 print_heatmap_corr(data_dummy_pos_coef)
 
-st.image(imagen1)
 '''Vemos que la las variables independientes no tienen mucha correlación con nuestra variable dependiente, esto quiere decir que la solución al problema es compleja y hay que tratarla con cuidado, y también puede darnos una indicación de que los resultados que podemos esperar de los modelos no van ha ser muy buenos, pero tenemos que tratar de hacer todo lo posible para que estos sean lo más altos posibles. Respecto a la correlación entre las variables independientes vemos que salvo TotalCharges no hay excesiva colinealidad entre nuestras variables, por lo que nos quedaremos con ellas.
 
 Como nuestro set de datos es diferente al original debemos de volver a realizar el train_test_split de nuevo, junto con el scaler y el smote para corregir el balanceo.
