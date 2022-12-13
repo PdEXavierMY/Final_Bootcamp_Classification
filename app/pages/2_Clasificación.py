@@ -2,7 +2,6 @@ import streamlit as st
 import pathlib
 import sys
 import os
-
 from PIL import Image
 
 # accedemos al directorio padre
