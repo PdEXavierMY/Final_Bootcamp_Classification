@@ -16,16 +16,24 @@ sys.path.append(str(path))
 # importamos el codigo de analysis/code_classification.py
 from analysis.code_classification import *
 
-st.title('Modelo de clasificación')
+st.title('Modelo de clasificación:')
 
 st.write('''
     Aquí mostraremos los resultados del modelo de clasificación.
 ''')
-
-lista = data.select_dtypes(include=['int64', 'float64']).columns; print(lista)
-corr = data[lista].corr()
-fig = plt.figure(figsize=(30, 20))
-sns.heatmap(corr, annot=True)
+st.write('''Con los datos limpios, mostramos la matriz de correlación''')
+fig = plt.figure(figsize=(15, 10))
+sns.set(style='white')
+mask=np.triu(np.ones_like(data.corr(), dtype=bool))
+cmap=sns.diverging_palette(0, 10, as_cmap=True)
+sns.heatmap(data.corr(),
+          mask=mask,
+          cmap=cmap,
+          center=0,
+          square=True,
+          annot=True,
+          linewidths=0.5,
+          cbar_kws={'shrink': 0.5})
 st.pyplot(fig)
 #Vemos que no hay ninguna variable que esté muy correlacionada con otra, por lo que no es necesario eliminar ninguna columna basandose en este criterio.
 fig2 = plt.figure(figsize=(30, 20))
