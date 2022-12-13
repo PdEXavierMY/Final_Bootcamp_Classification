@@ -5,7 +5,7 @@ El proyecto consiste en la creación de una aplicación web que muestre los resu
 Los autores de este proyecto son los siguientes:
 
 1. [@jmedina28](https://github.com/jmedina28)
-2. [@Javier Míguelez](https://github.com/Xavitheforce)
+2. [@Javier Miguélez](https://github.com/Xavitheforce)
 3. [@Diego de Santos](https://github.com/Diegodesantos1)
 
 <h2 align = "center"> Modelo de Regresión</h2>
