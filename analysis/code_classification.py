@@ -83,7 +83,7 @@ sns.countplot(data_dummy.offer_acepted)
 plt.show()
 
 #los numeros estan muuuy desbalanceados, vamos a evaluar nuestras opciones
-#como no tenemos un numero demasiado grande de datos vamos a hacer un oversampling en los datos train
+#como no tenemos un numero extremadamente grande de datos vamos a hacer un oversampling en los datos train
 #en este caso nos vamos a decantar por el método de oversampling: SMOTE
 smote = SMOTE()
 
@@ -121,7 +121,8 @@ plt.title('Confusion Matrix Test')
 plt.show()
 
 print(res_sm, '\n')
-'''El modelo ha mejorado un poco y se ha corregido el overfitting. Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados nuestros datos en busca de colinealidad, realizar un estudio de importancia de características o cambiar de modelo. Antes de cambiar de modelo vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
+'''El modelo ha mejorado un poco y se ha corregido el overfitting. El test ha subido por lo que ya tenemos un dato bajo pero suficiente para poder realizar nuestra predicción. El único problema es la precisión de nuestro modelo, vamos a ver si podemos mejorarla.
+Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados nuestros datos en busca de colinealidad, realizar un estudio de importancia de características o cambiar de modelo. Antes de cambiar de modelo vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
 
 print(log.intercept_, '\n')
 coefs = dict(zip(list(data_dummy.drop(['offer_acepted'], axis=1).columns),list(log.coef_[0])))
@@ -218,7 +219,7 @@ plt.title('Confusion Matrix Test')
 plt.show()
 print(res, '\n')
 
-''''''
+'''En este nuevo modelo la precisión ha disminuido, así que nos quedaremos con el modelo anterior. El modelo escogido nos da cierta información acerca de que clientes nos pueden interesar, pero no es un modelo que nos de una gran precisión, por lo que no podemos confiar en él con plenitud para tomar decisiones.'''
 
 
-pickle.dump(lr, open('../models/modelo_clasificacion.pkl', 'wb'))
+pickle.dump(lr, open('./models/modelo_clasificacion.pkl', 'wb'))
