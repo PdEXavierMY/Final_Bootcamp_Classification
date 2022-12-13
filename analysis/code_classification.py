@@ -75,22 +75,22 @@ sns.heatmap(confusion_matrix(y_test, log.predict(X_test)), annot=True)
 plt.title('Confusion Matrix Test')
 #plt.show()
 print(res_num, '\n')
-#nuestra precision es bastante mala, vamos a probar con un modelo de arbol de decision
-
-#vamos a ver el balanceo de los datos
+#nuestra precision es horrible, vamos a ver que pasa con los datos
+#vamos a ver el balanceo de los datos para hacernos una idea de que falla
 sns.countplot(data_dummy.offer_acepted)
 #plt.show()
 
+#los numeros estan muuuy desbalanceados, vamos a evaluar nuestras opciones
 #como no tenemos un numero demasiado grande de datos vamos a hacer un oversampling en los datos train
-#vamos a probar con ambos métodos de oversampling: SMOTE y random oversampling
+#en este caso nos vamos a decantar por el método de oversampling: SMOTE
 smote = SMOTE()
-rov = RandomOverSampler()
 
 X_train_sm, y_train_sm = smote.fit_resample(X_train, y_train)
 print(X_train_sm.shape, y_train_sm.shape, '\n')
 print(y_train_sm.value_counts(), '\n')
 sns.histplot(y_train_sm)
 #plt.show()
+#balanceamos(forzamos) los datos
 
 log.fit(X_train_sm, y_train_sm)
 score_train_sm = log.score(X_train_sm, y_train_sm)
@@ -119,11 +119,12 @@ plt.title('Confusion Matrix Test')
 #plt.show()
 
 print(res_sm, '\n')
-'''Como podemos oberservar el modelo ha mejorado un poco y se ha corregido el overfitting, llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados nuestros datos en busca de colinealidad, realizar un estudio de importancia de características o cambiar de modelo. Antes de cambiar de modelo vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
+'''El modelo ha mejorado un poco y se ha corregido el overfitting. Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados nuestros datos en busca de colinealidad, realizar un estudio de importancia de características o cambiar de modelo. Antes de cambiar de modelo vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
 
 print(log.intercept_, '\n')
 coefs = dict(zip(list(data_dummy.drop(['offer_acepted'], axis=1).columns),list(log.coef_[0])))
 print(coefs, '\n')
+
 '''Vamos a interpretar estos coeficientes, también denominados R statistic.
 
 Un valor positivo significa que al crecer la variable predictora, lo hace la probabilidad de que el evento ocurra. Un valor negativo implica que si la variable predictora decrece, la probabilidad de que el resultado ocurra disminuye. Si una variable tiene un valor pequeño de R entonces esta contribuye al modelo sólo una pequeña cantidad.
@@ -168,7 +169,7 @@ def print_heatmap_corr(data:pd.DataFrame, annot:bool=True, cmap:str=None,
 
 print_heatmap_corr(data_dummy_pos_coef)
 
-''''Vemos que la las variables independientes no tienen mucha correlación con nuestra variable dependiente, esto quiere decir que la solución al problema es compleja y hay que tratarla con cuidado, y también puede darnos una indicación de que los resultados que podemos esperar de los modelos no van ha ser muy buenos, pero tenemos que tratar de hacer todo lo posible para que estos sean lo más altos posibles. Respecto a la correlación entre las variables independientes vemos que salvo TotalCharges no hay excesiva colinealidad entre nuestras variables, por lo que nos quedaremos con ellas.
+''''Vemos que las variables independientes no tienen mucha correlación con nuestra variable dependiente, lo que quiere decir que la solución al problema es compleja, y también puede darnos una indicación de que los resultados que podemos esperar de los modelos no van ha ser los mejores. Respecto a la correlación entre las variables independientes vemos no hay excesiva colinealidad entre nuestras variables, por lo que nos quedaremos con ellas.
 
 Como nuestro set de datos es diferente al original debemos de volver a realizar el train_test_split de nuevo, junto con el scaler y el smote para corregir el balanceo.
 
