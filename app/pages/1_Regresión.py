@@ -94,3 +94,5 @@ fig3r = plt.figure(figsize=(20,20))
 sns.histplot([np.exp(y_pred), y_test])
 plt.title("Histograma de los datos reales y los datos predichos")
 st.pyplot(fig3r)
+"""El modelo de regresión lineal que hemos aplicado no es del todo bueno, ya que a la hora de predecir el precio de las viviendas, al aplicarle una regresión lineal a los datos, lo que más se asemeja a una recta son los metros cuadrados de la vivienda, pero para poder hacer una predicción más precisa, deberíamos de tener en cuenta más variables, como el número de habitaciones, el número de baños, la zona, la antigüedad, etc.
+Por ello, el modelo es capaz de predecir el precio de las viviendas, pero no de forma muy precisa, ya que la puntuación R2 es muy bajo, y el error es muy alto."""

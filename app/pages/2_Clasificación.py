@@ -14,16 +14,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, confusion_matrix, recall_score, precision_score
 from imblearn.over_sampling import SMOTE, RandomOverSampler
 import warnings
+from PIL import Image
 warnings.filterwarnings('ignore')
-
 
 # accedemos al directorio padre
 path = pathlib.Path(__file__).parent.parent.parent
 sys.path.append(str(path))
-
+imagen1 = Image.open('media/datos_modelo_valido.png')
+imagen2 = Image.open('media/datos_modeloultimo_novalido.png')
 # importamos el codigo de analysis/code_classification.py
 from analysis.code_classification import *
-
+from analysis.code_classification_data_cleaning import *
 st.title('Modelo de clasificación:')
 
 st.write('''
@@ -34,7 +35,6 @@ corr = data[lista].corr()
 fig1 = plt.figure(figsize=(30, 20))
 sns.heatmap(corr, annot=True)
 st.pyplot(fig1)
-st.write('''Con los datos limpios, mostramos la matriz de correlación''')
 fig2 = plt.figure(figsize=(15, 10))
 sns.set(style='white')
 mask=np.triu(np.ones_like(data.corr(), dtype=bool))
@@ -48,6 +48,7 @@ sns.heatmap(data.corr(),
           linewidths=0.5,
           cbar_kws={'shrink': 0.5})
 st.pyplot(fig2)
+st.write('''Mostramos la matriz de correlación inicial, que nos ayuda a determinar si eliminar alguna columna.''')
 #Vemos que no hay ninguna variable que esté muy correlacionada con otra, por lo que no es necesario eliminar ninguna columna basandose en este criterio.
 
 data_dummy = pd.get_dummies(data, drop_first = True)
@@ -101,13 +102,17 @@ plt.title('Confusion Matrix Test')
 st.pyplot(fig4)
 plt.show()
 print(res_num, '\n')
-#nuestra precision es bastante mala, vamos a probar con un modelo de arbol de decision
+'''Nuestra precision es horrible, además de nuestra matriz de confusión sin valor alguno. Vamos a estudiar los datos para entender que ocurre. Para ello,
+vamos a estudiar el balanceo de los datos para hacernos una idea de que es lo que falla.'''
 fig5 = plt.figure(figsize=(15, 10))
 #vamos a ver el balanceo de los datos
 sns.countplot(data_dummy.offer_acepted)
 # mostramos el gráfico con streamlit
 st.pyplot(fig5)
 plt.show()
+'''Los numeros estan muy desbalanceados, así que vamos a evaluar nuestras opciones.
+Como no tenemos un número extremadamente grande de datos vamos a hacer un oversampling en los datos train,
+en este caso decantándonos por el método de oversampling: SMOTE'''
 
 #como no tenemos un numero demasiado grande de datos vamos a hacer un oversampling en los datos train
 #vamos a probar con ambos métodos de oversampling: SMOTE y random oversampling
@@ -150,13 +155,13 @@ plt.title('Confusion Matrix Test')
 st.pyplot(fig8)
 plt.show()
 
+print(res_sm, '\n')
+'''El modelo ha mejorado un poco y se ha corregido el overfitting. El test ha subido por lo que ya tenemos un dato bajo pero suficiente para poder realizar nuestra predicción. El único problema es la precisión de nuestro modelo, vamos a ver si podemos mejorarla.
+Llegados a este punto podemos valorar varias opciones o bien realizar un análisis más profundo de los datos y ver como están correlacionados estos en busca de colinealidad o realizar un estudio de importancia de características. Vamos a probar a ajustar el punto de intersección de la regresión logística y evaluar los coeficientes de cada una de las características y su correlación en busca de colinealidad.'''
+
+print(log.intercept_, '\n')
 coefs = dict(zip(list(data_dummy.drop(['offer_acepted'], axis=1).columns),list(log.coef_[0])))
 print(coefs, '\n')
-'''Vamos a interpretar estos coeficientes, también denominados R statistic.
-
-Un valor positivo significa que al crecer la variable predictora, lo hace la probabilidad de que el evento ocurra. Un valor negativo implica que si la variable predictora decrece, la probabilidad de que el resultado ocurra disminuye. Si una variable tiene un valor pequeño de R entonces esta contribuye al modelo sólo una pequeña cantidad.
-
-De esto podemos extraer que si quitamos todas las columnas con un coeficiente negativo, nuestro modelo podría mejorar.'''
 
 neg_coef = []
 
@@ -192,25 +197,17 @@ def print_heatmap_corr(data:pd.DataFrame, annot:bool=True, cmap:str=None,
             annot=annot
            )
     p.set_title(title, fontsize=20)
-    
-    if save:
-        try:
-            plt.savefig(f'./media/{title}.jpg')
-        except:
-            destino = input('No exite la carpeta de destino, introduce un nombre para la carpeta de destino: ')
-            os.mkdir(destino)
-            plt.savefig(f'{destino}/{title}.jpg')
     st.pyplot(figcorr)
     plt.show()
 
 print_heatmap_corr(data_dummy_pos_coef)
 
+st.image(imagen1)
 '''Vemos que la las variables independientes no tienen mucha correlación con nuestra variable dependiente, esto quiere decir que la solución al problema es compleja y hay que tratarla con cuidado, y también puede darnos una indicación de que los resultados que podemos esperar de los modelos no van ha ser muy buenos, pero tenemos que tratar de hacer todo lo posible para que estos sean lo más altos posibles. Respecto a la correlación entre las variables independientes vemos que salvo TotalCharges no hay excesiva colinealidad entre nuestras variables, por lo que nos quedaremos con ellas.
 
 Como nuestro set de datos es diferente al original debemos de volver a realizar el train_test_split de nuevo, junto con el scaler y el smote para corregir el balanceo.
 
 Declararemos de nuevo nuestras X e y y aplicamos todo el proceso de transformaciones.'''
-
 X = data_dummy_pos_coef.drop(['offer_acepted'], axis=1)
 y = data_dummy_pos_coef['offer_acepted']
 print(X.shape, y.shape, '\n')
@@ -233,4 +230,27 @@ precision_test = precision_score(y_test, lr.predict(X_test))
 recall_train = recall_score(y_train, lr.predict(X_train))
 recall_test = recall_score(y_test, lr.predict(X_test))
 f1_train = f1_score(y_train, lr.predict(X_train))
-f1_test = f1_score(y_test, lr.predict(X_test))   
+f1_test = f1_score(y_test, lr.predict(X_test))
+        
+res = {'lr_train_score': score_train,
+       'lr_test_score': score_test,
+       'lr_train_precision': precision_train,
+       'lr_test_precision': precision_test,
+       'lr_train_recall': recall_train,
+       'lr_test_recall': recall_test,
+       'lr_f1_train': f1_train,
+       'lr_f1_test': f1_test}
+        
+fig9 = plt.figure(figsize=(20,15))
+sns.heatmap(confusion_matrix(y_train, lr.predict(X_train)), annot=True)
+plt.title('Confusion Matrix Train')
+st.pyplot(fig9)
+plt.show()
+fig10 = plt.figure(figsize=(20,15))
+sns.heatmap(confusion_matrix(y_test, lr.predict(X_test)), annot=True)
+plt.title('Confusion Matrix Test')
+st.pyplot(fig10)
+plt.show()
+print(res, '\n')
+st.image(imagen2)
+'''En este nuevo modelo la precisión ha disminuido, así que nos quedaremos con el modelo anterior. El modelo escogido nos da cierta información acerca de que clientes nos pueden interesar, pero no es un modelo que nos de una gran precisión, por lo que no podemos confiar en él con plenitud para tomar decisiones.'''
