@@ -14,3 +14,5 @@ Para el modelo de regresión, hemos utilizado un dataset bastante amplio y compl
 
 
 <h2 align = "center"> Modelo de Clasificación</h2>
+
+Para el modelo de clasificación, hemos utilizado un dataset bastante amplio con información referida a los clientes de un banco concreto. Con todos estos datos y tras realizar una limpieza de estos, hemos aplicado un modelo de clasificación con el objetivo de predecir si un cliente abriría una cuenta usando datos varios como sus ingresos, balances... Finalmente, aunque el modelo no es del todo preciso, nos proporciona una idea aproximada de que cantidad de clientes dentro de nuestra base de datos y con que probabilidad abrirían una nueva cuenta. Para poder tener una mayor exactitud deberemos analizar más a fondo los datos y desarrollar transformaciones de estos más avanzadas que permitan asegurar con certeza nuestro objetivo.
