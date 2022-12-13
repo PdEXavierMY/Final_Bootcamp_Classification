@@ -85,7 +85,7 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_
 
 pt = PowerTransformer()
 pt.fit(x_train)
-with open("scalers/scalers.plk", "wb") as f:
+with open("scalers/scalers.pkl", "wb") as f:
     pickle.dump(pt, f)
 
 # Los guardamos en un archivo pickle para poder usarlos en el futuro
@@ -113,7 +113,7 @@ print("El R2 es de: ", r2_score(y_test, np.exp(y_pred)))
 # Calculando el R2, hemos obtenido un valor muy bajo debido a que el modelo no es muy bueno, y tiene mucho error
 # Ahora vamos a guardar el modelo
 
-with open("models/modelo_regresion.plk", "wb") as f:
+with open("models/modelo_regresion.pkl", "wb") as f:
     pickle.dump(lr, f)
 
 # Ahora vamos a hacer un histograma de los datos reales y los datos predichos
